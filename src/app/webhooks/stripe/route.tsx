@@ -2,6 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import Stripe from "stripe";
 import db from "@/db/db";
 import {Resend} from "resend";
+import PurchaseReceiptEmail from "@/email/PurchaseReceipt";
 
 const stripe = new Stripe(process.env.STRIPE_SCRET_KEY as string)
 const resend = new Resend(process.env.RESEND_API_KEY as string)
@@ -35,11 +36,15 @@ export async function POST(req:NextRequest) {
                 expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24)
         }})
 
-        resend.emails.send({
-            from:
+        await resend.emails.send({
+            from: 'Shop - Raian Melon <trgovina@raianmelon.com>',
             to: email,
-            subject:,
-            react: <h1></h1>
+            subject: 'Order Confirmation',
+            react: <PurchaseReceiptEmail product={product} order={order} downloadVerificationId={downloadVerification.id} />
         })
+
+        return new NextResponse('Success', {status: 200})
     }
+
+    return new NextResponse('Event not supported', {status: 404})
 }
