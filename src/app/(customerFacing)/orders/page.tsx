@@ -27,8 +27,7 @@ export default function MyOrders() {
         </Card>
     </form>
 }
-
-export function SubmitButton() {
+function SubmitButton() {
     const {pending} = useFormStatus()
     return <Button className={'w-full'} size={'lg'} disabled={pending}>{pending? 'Sending...' : 'Send'}</Button>
 }
